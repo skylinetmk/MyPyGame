@@ -19,8 +19,10 @@ pygame.display.set_caption('Змейка от skylinetmk') #Добавляем �
 #обозначаем цвета в rgb
 yellow = (255, 255, 102)
 dis_fon = (50, 190, 86)
-snake_color = (0, 0, 0)
-food_color = (255, 0, 0)
+snake_color1 = (0, 0, 0)
+snake_color2 = (50, 0, 0)
+food_color1 = (255, 0, 0)
+food_color2 = (0, 0, 0)
 dispay_mes_color = (190, 0, 0)
 
 #стиль выводимого текста на экран при ошибках или окончании игры
@@ -42,8 +44,22 @@ def display_message(msg,color):
 
 #Функция отображения тела змейки
 def my_snake(snake_block, snake_list):
+   i=0
    for x in snake_list:
-       pygame.draw.rect(dis, snake_color, [x[0], x[1], snake_block, snake_block])
+       # змейка из квадратов
+       #pygame.draw.rect(dis, snake_color, [x[0], x[1], snake_block, snake_block])
+       #змейка из шаров, чуть ее разннобразим
+       if i%2 == 0:
+           pygame.draw.circle(dis, snake_color1, [x[0] + snake_block/2, x[1] + snake_block/2], snake_block/2)
+       else:
+           pygame.draw.circle(dis, snake_color2, [x[0] + snake_block/2, x[1] + snake_block/2], snake_block/2  + snake_block/8)
+       i += 1
+
+#Функция отображения еды змейки
+def my_apple(x,y):
+    # pygame.draw.rect(dis, food_color, [x, y, snake_block, snake_block])
+    pygame.draw.circle(dis, food_color1, [x + snake_block/2, y + snake_block/2],  snake_block/2) #само тело яблока
+    pygame.draw.circle(dis, food_color2, [x + snake_block / 2, y + snake_block / 2], snake_block/2, 1) #окантовка яблока
 
 def score(score_text):
    value = score_font.render("Съедено яблок: " + str(score_text), True, yellow)
@@ -113,9 +129,7 @@ def gameLoop(): #Описываем всю игровую логику в одн
                 # присваиваем переменной нажатие кнопки - направления движения, для того чтоб змейка не разворачивалась головой в свое же тело
                 global_key_go = event.key
 
-
-
-        # проверяем новое значение положение головы змейки, если з апределами экрана, то окончание игры
+        # проверяем новое значение положение головы змейки, если за пределами экрана, то окончание игры
         if snake_x >= display_width or snake_x < 0 or snake_y >= display_height or snake_y < 0:
             game_close = True
 
@@ -123,8 +137,8 @@ def gameLoop(): #Описываем всю игровую логику в одн
         snake_y += snake_y_change #Записываем новое значение положения змейки по оси y.
         #заливка
         dis.fill(dis_fon)
-        # рисуем змейку
-        pygame.draw.rect(dis, food_color, [foodx, foody, snake_block, snake_block])
+        # рисуем еду змейки
+        my_apple(foodx, foody)
         # Создаём список, в котором будет храниться показатель длины змейки при движениях.
         snake_Head = []
         snake_Head.append(snake_x)  # Добавляем значения в список при изменении по оси х.
@@ -137,6 +151,7 @@ def gameLoop(): #Описываем всю игровую логику в одн
                 game_close = True
         # рисуем змейку
         my_snake(snake_block, snake_List)
+        # выводим текущий счет съеденных яблок
         score(Length_of_snake - 1)
         pygame.display.update() #обновляем дисплей
 
@@ -144,8 +159,6 @@ def gameLoop(): #Описываем всю игровую логику в одн
             foodx = round(random.randrange(0, display_width - snake_block) / snake_block) * snake_block
             foody = round(random.randrange(0, display_height - snake_block) / snake_block) * snake_block
             Length_of_snake += 1
-
-
 
         clock.tick(snake_speed) #скорость игры
 
