@@ -19,8 +19,11 @@ pygame.display.set_caption('Змейка от skylinetmk') #Добавляем �
 #обозначаем цвета в rgb
 yellow = (255, 255, 102)
 dis_fon = (50, 190, 86)
-snake_color1 = (0, 0, 0)
-snake_color2 = (50, 0, 0)
+# змея
+snake_color1 = (50, 100, 50)
+snake_color2 = (40, 20, 100)
+snake_color_contur = (0, 40, 0)
+# еда
 food_color1 = (255, 0, 0)
 food_color2 = (0, 0, 0)
 dispay_mes_color = (190, 0, 0)
@@ -51,8 +54,10 @@ def my_snake(snake_block, snake_list):
        #змейка из шаров, чуть ее разннобразим
        if i%2 == 0:
            pygame.draw.circle(dis, snake_color1, [x[0] + snake_block/2, x[1] + snake_block/2], snake_block/2)
+           pygame.draw.circle(dis, snake_color_contur, [x[0] + snake_block / 2, x[1] + snake_block / 2], snake_block / 2, 3)
        else:
            pygame.draw.circle(dis, snake_color2, [x[0] + snake_block/2, x[1] + snake_block/2], snake_block/2  + snake_block/8)
+           pygame.draw.circle(dis, snake_color_contur, [x[0] + snake_block/2, x[1] + snake_block/2], snake_block/2  + snake_block/8,  3)
        i += 1
 
 #Функция отображения еды змейки
