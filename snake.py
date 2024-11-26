@@ -2,7 +2,6 @@ import time
 import random
 import pygame
 
-
 #инициализируем pygame
 pygame.init()
 #создаем окно с игрой - дисплей
@@ -20,13 +19,15 @@ pygame.display.set_caption('Змейка от skylinetmk') #Добавляем �
 yellow = (255, 255, 102)
 dis_fon = (50, 190, 86)
 # змея
-snake_color1 = (50, 100, 50)
+snake_color1 = (255, 200, 90)
 snake_color2 = (40, 20, 100)
 snake_color_contur = (0, 40, 0)
 # еда
 food_color1 = (255, 0, 0)
 food_color2 = (0, 0, 0)
 dispay_mes_color = (190, 0, 0)
+#преграда
+barriers_color = (0, 0, 0)
 
 #стиль выводимого текста на экран при ошибках или окончании игры
 font_style = pygame.font.SysFont(None, 35)
@@ -36,7 +37,9 @@ clock = pygame.time.Clock() # для использования игрового
 snake_speed = 10 #Ограничим скорость движения змейки
 snake_block = 20 #размер блока змейки
 
-
+#вводим уровень сложности (количество преград)
+#input_level = input("ВВЕДИТЕ УРОВЕНЬ СЛОЖНОСТИ:(1-100): ")
+input_level = 10
 #Создадим функцию, которая будет показывать нам сообщения на игровом экране.
 def display_message(msg,color):
     message_text = font_style.render(msg, True, color)
@@ -66,10 +69,27 @@ def my_apple(x,y):
     pygame.draw.circle(dis, food_color1, [x + snake_block/2, y + snake_block/2],  snake_block/2) #само тело яблока
     pygame.draw.circle(dis, food_color2, [x + snake_block / 2, y + snake_block / 2], snake_block/2, 1) #окантовка яблока
 
+#функция отображения текущего счета
 def score(score_text):
    value = score_font.render("Съедено яблок: " + str(score_text), True, yellow)
    dis.blit(value, [0, 0])
 
+#функция отрисовки преград для змейки
+def my_barriers(barriers_list):
+    for i in barriers_list:
+        pygame.draw.rect(dis, barriers_color, [i[0], i[1], snake_block, snake_block])
+
+#функция формирования массива преград
+def barrierslist(level):
+    barriers_list = []
+    for i in range(level):
+            barier_x = round(random.randrange(0, display_width - snake_block) / snake_block) * snake_block
+            barier_y = round(random.randrange(0, display_height - snake_block) / snake_block) * snake_block
+            barriers_list.append([barier_x, barier_y])
+    return barriers_list
+
+
+#основная функиця всей игровой логики игры
 def gameLoop(): #Описываем всю игровую логику в одной функции.
     # переменная статуса игры (продолжаеся или закончена)
     game_over = False
@@ -81,6 +101,7 @@ def gameLoop(): #Описываем всю игровую логику в одн
     Length_of_snake = 1
     global_key_go = 0
 
+    barriers_List = []
 
     # стартовое положение змейки - середина экрана
     snake_x = display_width / 2  # Указываем начальное значение положения змейки по оси х.
@@ -89,10 +110,21 @@ def gameLoop(): #Описываем всю игровую логику в одн
     snake_x_change = 0  # Создаём переменную, которой в цикле while будут присваиваться значения изменения положения змейки по оси х.
     snake_y_change = 0  # создаём переменную, которой в цикле while будут присваиваться значения изменения положения змейки по оси y.
 
-    # Создаём переменную, которая будет указывать расположение еды по оси х.
-    foodx = round(random.randrange(0, display_width - snake_block) / snake_block) * snake_block
-    # Создаём переменную, которая будет указывать расположение еды по оси y.
-    foody = round(random.randrange(0, display_height - snake_block) / snake_block) * snake_block
+    def new_food():
+        # Создаём переменную, которая будет указывать расположение еды по оси х.
+        foodx = round(random.randrange(0, display_width - snake_block) / snake_block) * snake_block
+        # Создаём переменную, которая будет указывать расположение еды по оси y.
+        foody = round(random.randrange(0, display_height - snake_block) / snake_block) * snake_block
+        return [foodx, foody]
+
+    # преграды
+    barriers_List = barrierslist(int(input_level))
+    #первоначальное появление еды
+    new_food_xy = new_food()
+    while new_food_xy in barriers_List:
+        new_food_xy = new_food()
+    foodx = new_food_xy[0]
+    foody = new_food_xy[1]
 
 
     #пока игра продолжается
@@ -137,6 +169,9 @@ def gameLoop(): #Описываем всю игровую логику в одн
         # проверяем новое значение положение головы змейки, если за пределами экрана, то окончание игры
         if snake_x >= display_width or snake_x < 0 or snake_y >= display_height or snake_y < 0:
             game_close = True
+        #змейка врезалась в препятствие
+        if ([snake_x, snake_y] in barriers_List):
+            game_close = True
 
         snake_x += snake_x_change #Записываем новое значение положения змейки по оси х.
         snake_y += snake_y_change #Записываем новое значение положения змейки по оси y.
@@ -144,6 +179,7 @@ def gameLoop(): #Описываем всю игровую логику в одн
         dis.fill(dis_fon)
         # рисуем еду змейки
         my_apple(foodx, foody)
+
         # Создаём список, в котором будет храниться показатель длины змейки при движениях.
         snake_Head = []
         snake_Head.append(snake_x)  # Добавляем значения в список при изменении по оси х.
@@ -156,13 +192,24 @@ def gameLoop(): #Описываем всю игровую логику в одн
                 game_close = True
         # рисуем змейку
         my_snake(snake_block, snake_List)
+        # рисуем препятствия
+        my_barriers(barriers_List)
+
         # выводим текущий счет съеденных яблок
         score(Length_of_snake - 1)
         pygame.display.update() #обновляем дисплей
 
-        if snake_x == foodx and snake_y == foody:  # Указываем, что в случаях, если координаты головы змейки совпадают с координатами еды, еда появляется в новом месте, а длина змейки увеличивается на одну клетку.
-            foodx = round(random.randrange(0, display_width - snake_block) / snake_block) * snake_block
-            foody = round(random.randrange(0, display_height - snake_block) / snake_block) * snake_block
+
+        # Указываем, что в случаях, если координаты головы змейки совпадают с координатами еды, еда появляется в новом месте, а длина змейки увеличивается на одну клетку.
+        if (snake_x == foodx and snake_y == foody):
+            new_food_xy = new_food()
+            foodx = new_food_xy[0]
+            foody = new_food_xy[1]
+            # пересоздаем координаты, если  они попадают в препятствие
+            while new_food_xy in barriers_List:
+                new_food_xy = new_food()
+                foodx = new_food_xy[0]
+                foody = new_food_xy[1]
             Length_of_snake += 1
 
         clock.tick(snake_speed) #скорость игры
