@@ -34,7 +34,9 @@ font_style = pygame.font.SysFont(None, 35)
 score_font = pygame.font.SysFont("bahnschrift", 30)
 
 clock = pygame.time.Clock() # для использования игрового времени (скорости игры)
-snake_speed = 10 #Ограничим скорость движения змейки
+snake_speed_list = [10,30] #Ограничим скорость движения змейки (обычная и при зажатой клавише)
+snake_speed = snake_speed_list[0] #Стартовая скорость движеня змейки
+
 snake_block = 20 #размер блока змейки
 
 #вводим уровень сложности (количество преград)
@@ -68,6 +70,7 @@ def my_apple(x,y):
     # pygame.draw.rect(dis, food_color, [x, y, snake_block, snake_block])
     pygame.draw.circle(dis, food_color1, [x + snake_block/2, y + snake_block/2],  snake_block/2) #само тело яблока
     pygame.draw.circle(dis, food_color2, [x + snake_block / 2, y + snake_block / 2], snake_block/2, 1) #окантовка яблока
+    
 
 #функция отображения текущего счета
 def score(score_text):
@@ -142,11 +145,16 @@ def gameLoop(): #Описываем всю игровую логику в одн
                     if event.key == pygame.K_c:
                         gameLoop()
         # Игра продолжается
+        keydown_status = 0
+        global snake_speed
         for event in pygame.event.get():
             print(event)  #Выводить в терминал все произошедшие события.
             if event.type==pygame.QUIT:
                 game_over = True
                 game_close = False
+            # отдали клавишу втрелок обратно
+            if event.type == pygame.KEYUP and event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
+                snake_speed = snake_speed_list[0] # обычное движение змейки (скорость)
             if event.type == pygame.KEYDOWN: #Добавляем считывание направления движения змеи
 
                 # проверяем смену направления движения змейки
@@ -165,6 +173,9 @@ def gameLoop(): #Описываем всю игровую логику в одн
 
                 # присваиваем переменной нажатие кнопки - направления движения, для того чтоб змейка не разворачивалась головой в свое же тело
                 global_key_go = event.key
+                # присваиваем статус нажатой клавиши на случай, если клавиша не будет отжата
+                if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
+                    snake_speed = snake_speed_list[1] # ускоренное движение змейки
 
         # проверяем новое значение положение головы змейки, если за пределами экрана, то окончание игры
         if snake_x >= display_width or snake_x < 0 or snake_y >= display_height or snake_y < 0:
