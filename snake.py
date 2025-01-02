@@ -7,7 +7,7 @@ pygame.init()
 #создаем окно с игрой - дисплей
 display_width = 800
 display_height = 600
-dis = pygame.display.set_mode((display_width, display_height))  # Задаём размер игрового поля.
+dis = pygame.display.set_mode((display_width, display_height), pygame.FULLSCREEN)  # Задаём размер игрового поля.
 
 #обновляем дисплей
 pygame.display.update()
