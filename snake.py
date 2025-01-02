@@ -34,7 +34,7 @@ font_style = pygame.font.SysFont(None, 35)
 score_font = pygame.font.SysFont("bahnschrift", 30)
 
 clock = pygame.time.Clock() # для использования игрового времени (скорости игры)
-snake_speed_list = [10,30] #Ограничим скорость движения змейки (обычная и при зажатой клавише)
+snake_speed_list = [10,30] #Ограничим скорость движения змейки (обычная и при зажатой клавише) - это по сути FPS
 snake_speed = snake_speed_list[0] #Стартовая скорость движеня змейки
 
 snake_block = 20 #размер блока змейки
@@ -223,7 +223,7 @@ def gameLoop(): #Описываем всю игровую логику в одн
                 foody = new_food_xy[1]
             Length_of_snake += 1
 
-        clock.tick(snake_speed) #скорость игры
+        clock.tick(snake_speed) #скорость игры в кадрах в секунду (FPS)
 
     pygame.quit()
     #выходим из игры (закрытие окна при нажатии кнопки закрытия)
