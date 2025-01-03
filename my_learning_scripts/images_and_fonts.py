@@ -40,7 +40,12 @@ my_hero_height = 100
 SC_background = pygame.image.load("images/background.jpg").convert()  # картинка - это тоже поверхность
 SC_background_rect = SC_background.get_rect(width=SC_Width, height=SC_Height)
 
-my_hero = pygame.image.load("images/my_hero_giraf.png").convert_alpha()  # картинка - это тоже поверхность
+my_hero_surf = pygame.image.load("images/my_hero_giraf.png").convert_alpha()  # картинка - это тоже поверхность
+my_hero_left = my_hero_surf
+my_hero_right = pygame.transform.flip(my_hero_surf,1,0)   # 1 и 0 трансформация по горизонтали и вертикали соотвественно
+
+my_hero = my_hero_left
+
 my_hero_rect = my_hero.get_rect(centerx=SC_Width // 2, width=my_hero_width, height=my_hero_height) # устанавливаем центр персонажа по X в центре экрана и другие параметры
 my_hero_rect.bottom = my_hero_bottom #устанавливаем нижнюю часть героя по верху земли
 
@@ -58,11 +63,13 @@ while True:
     если уперлись в границы экрана, то дальше не жвигаемся'''
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
+        my_hero = my_hero_left
         my_hero_rect.x -= hero_go_speed
         #уперлись в левую границу экрана
         if my_hero_rect.x < 0:
             my_hero_rect.x = 0
     elif keys[pygame.K_RIGHT]:
+        my_hero = my_hero_right
         my_hero_rect.x += hero_go_speed
         # уперлись в левую границу экрана
         if my_hero_rect.x > SC_Width - my_hero_rect.width:
