@@ -50,7 +50,7 @@ my_hero_rect = my_hero.get_rect(centerx=SC_Width // 2, width=my_hero_width, heig
 my_hero_rect.bottom = my_hero_bottom #устанавливаем нижнюю часть героя по верху земли
 
 f = pygame.font.SysFont('Arial', 24)
-sc_text = f.render('ЖИРАФ НА ПРОГУЛКЕ!', 1, RED_COLOR, GREEN_COLOR)
+sc_text = f.render('ЖИРАФ ЗИМОЙ НА ПРОГУЛКЕ!', 1, RED_COLOR, GREEN_COLOR)
 sc_text_rect = sc_text.get_rect(centerx=SC_Width//2, top=0)
 
 
