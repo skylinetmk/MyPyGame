@@ -52,7 +52,6 @@ sc_text = f.render('ЖИРАФ ЗИМОЙ НА ПРОГУЛКЕ!', 1, RED_COLOR,
 sc_text_rect = sc_text.get_rect(centerx=SC_Width//2, top=0)
 
 #----- определяме падающих животных сверху экрана--------------
-speedAnimal = 1 # --- скорость падения животных------
 my_animal1 = Animals(SC_Width//2 + 100, 1, 'images/bear.png')
 my_animal2 = Animals(SC_Width//2-100, 3, 'images/coco.png')
 my_animal3 = Animals(SC_Width//2 + 300, 2, 'images/fox.png')
