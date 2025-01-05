@@ -1,7 +1,5 @@
-import time
-import random
 import pygame
-
+from class_animals import Animals
 #инициализируем pygame
 pygame.init()
 #создаем окно с игрой - дисплей
@@ -12,8 +10,8 @@ SC = pygame.display.set_mode((SC_Width, SC_Height), pygame.FULLSCREEN)  # Зад
 #обновляем дисплей
 pygame.display.update()
 #caption для окна дисплея
-pygame.display.set_caption('Работа с IMAGE и TEXT') #Добавляем название игры.
-pygame.display.set_icon(pygame.image.load("my_icon.png")) # иконка программы
+pygame.display.set_caption('Спрайты') #Добавляем название игры.
+pygame.display.set_icon(pygame.image.load("images/my_icon.png")) # иконка программы
 
 WHITE_COLOR = (255, 255, 255)
 BLUE_COLOR = (0, 0, 255)
@@ -53,6 +51,9 @@ f = pygame.font.SysFont('Arial', 24)
 sc_text = f.render('ЖИРАФ ЗИМОЙ НА ПРОГУЛКЕ!', 1, RED_COLOR, GREEN_COLOR)
 sc_text_rect = sc_text.get_rect(centerx=SC_Width//2, top=0)
 
+#----- определяме падающих животных сверху экрана--------------
+speedAnimal = 1 # --- скорость падения животных------
+my_animal1 = Animals(SC_Width//2, 'images/bear.png')
 
 while True:
     #обрабатываем выход из игры
@@ -89,9 +90,19 @@ while True:
             my_hero_rect.bottom = my_hero_bottom
             move = jump_force + 1 # чтобы перемещение по прыжку больше не срабатывало
 
+
+
+
     SC.blit(SC_background, SC_background_rect)
     SC.blit(my_hero, my_hero_rect)
     SC.blit(sc_text, sc_text_rect)
+
+
+    SC.blit(my_animal1.image, my_animal1.rect)
+    if my_animal1.rect.y < SC_Height-20:
+        my_animal1.rect.y += speedAnimal
+    else:
+        my_animal1.rect.y = 0
 
 
     pygame.display.update()
