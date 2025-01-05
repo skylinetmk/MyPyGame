@@ -6,8 +6,8 @@ from class_animals import Animals
 animal_width = 40
 animal_height = 40
 
-
-
+#инициализируем звуки в pygame
+pygame.mixer.pre_init(44100, -16, 1, 512)
 #инициализируем pygame
 pygame.init()
 #создаем окно с игрой - дисплей
@@ -15,7 +15,10 @@ SC_Width = 800
 SC_Height = 600
 SC = pygame.display.set_mode((SC_Width, SC_Height))  # Задаём размер игрового поля., pygame.FULLSCREEN
 
-
+#инициализация музыки
+pygame.mixer.music.load("sounds/main.mp3")
+#запуск с бесконечным повторением
+pygame.mixer.music.play(-1)
 #обновляем дисплей
 pygame.display.update()
 #caption для окна дисплея
@@ -86,11 +89,16 @@ def Score():
     SC.blit(sc_text, sc_text_rect)
 
 #----- определяме падающих животных сверху экрана в виде словаря--------------
-MyAnimals_images = ({'image':'bear.png','score': 4},
-                    {'image':'coco.png','score': 3},
-                    {'image':'fox.png','score': 2},
-                    {'image':'cat.png','score': 1})
+MyAnimals_images = ({'image':'bear.png','sound':'4.ogg','score': 4},
+                    {'image':'coco.png','sound':'3.ogg','score': 3},
+                    {'image':'fox.png','sound':'1.ogg','score': 1},
+                    {'image':'cat.png','sound':'2.ogg','score': 2})
 MyAnimals_surf = [pygame.image.load('images/'+AnimalPath['image']).convert_alpha() for AnimalPath in MyAnimals_images]
+
+MyAnimals_sound = [pygame.mixer.Sound('sounds/'+AnimalSound['sound']) for AnimalSound in MyAnimals_images]
+
+
+
 MyAnimals = pygame.sprite.Group()
 
 # функция создания случайного падающего животного
@@ -100,7 +108,7 @@ def createAnimal(group):
     x = randint(animal_width, SC_Width - animal_width)
     speed = randint(1, 5) # скорость случайная
     all_animals_count += 1
-    return Animals(animal_width, animal_height, x, speed, MyAnimals_images[indx]['score'], MyAnimals_surf[indx], group)
+    return Animals(animal_width, animal_height, x, speed, MyAnimals_images[indx]['score'], MyAnimals_surf[indx], MyAnimals_sound[indx], group)
 #контроль столкновения RECTов персонажа и падающих животных
 def AnimalsOnGiraf():
     global game_score
@@ -109,6 +117,7 @@ def AnimalsOnGiraf():
         if my_hero_rect.collidepoint(animal.rect.center):
             game_score += animal.score
             score_in += 1
+            animal.sound.play()
             animal.kill()
 
 

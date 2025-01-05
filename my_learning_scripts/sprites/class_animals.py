@@ -4,11 +4,12 @@ import pygame
 class Animals(pygame.sprite.Sprite):
 
     # параметры падающих животных
-    def __init__(self, width, height, x, speed, score, surf, group):
+    def __init__(self, width, height, x, speed, score, surf, sound, group):
         pygame.sprite.Sprite.__init__(self)
         self.width = width
         self.height = height
         self.image = surf
+        self.sound = sound
         self.rect = self.image.get_rect(center=(x, 0),width=width,height=height)
         self.speed = speed
         self.score = score
