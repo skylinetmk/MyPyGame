@@ -1,3 +1,5 @@
+import random
+
 import pygame
 from random import randint
 from class_animals import Animals, animal_width, animal_height
@@ -23,6 +25,7 @@ RED_COLOR = (255, 0, 0)
 
 
 FPS = 60  # число кадров в секунду
+FPS_giraf = 3 # в какое число кадров менять жирафа - движение тела
 clock = pygame.time.Clock()
 
 
@@ -44,11 +47,14 @@ my_hero_height = 100
 SC_background = pygame.image.load("images/background.jpg").convert()  # картинка - это тоже поверхность
 SC_background_rect = SC_background.get_rect(width=SC_Width, height=SC_Height)
 
-my_hero_surf = pygame.image.load("images/my_hero_giraf.png").convert_alpha()  # картинка - это тоже поверхность
-my_hero_left = my_hero_surf
-my_hero_right = pygame.transform.flip(my_hero_surf,1,0)   # 1 и 0 трансформация по горизонтали и вертикали соотвественно
+my_hero_surf1 = pygame.image.load("images/my_hero_giraf.png").convert_alpha()  # картинка - это тоже поверхность
+my_hero_surf2 = pygame.image.load("images/my_hero_giraf2.png").convert_alpha()  # картинка - это тоже поверхность
+my_hero_left1 = my_hero_surf1
+my_hero_right1 = pygame.transform.flip(my_hero_surf1,1,0)   # 1 и 0 трансформация по горизонтали и вертикали соотвественно
+my_hero_left2 = my_hero_surf2
+my_hero_right2 = pygame.transform.flip(my_hero_surf2,1,0)   # 1 и 0 трансформация по горизонтали и вертикали соотвественно
 
-my_hero = my_hero_left
+my_hero = my_hero_left1
 
 my_hero_rect = my_hero.get_rect(centerx=SC_Width // 2, width=my_hero_width, height=my_hero_height) # устанавливаем центр персонажа по X в центре экрана и другие параметры
 my_hero_rect.bottom = my_hero_bottom #устанавливаем нижнюю часть героя по верху земли
@@ -77,6 +83,7 @@ createAnimal(MyAnimals)
 # устанавливаем пользовательский таймер
 pygame.time.set_timer(pygame.USEREVENT, 1000)
 
+myHeroCadr = 0
 while True:
     #обрабатываем выход из игры
     for event in pygame.event.get():
@@ -89,13 +96,17 @@ while True:
     old_key = pygame.K_LEFT
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
-        my_hero = my_hero_left
+        if (myHeroCadr > FPS_giraf):
+            my_hero = random.choice([my_hero_left1, my_hero_left2])
+            myHeroCadr = 0
         my_hero_rect.x -= hero_go_speed
         #уперлись в левую границу экрана
         if my_hero_rect.x < 0:
             my_hero_rect.x = 0
     if keys[pygame.K_RIGHT]:
-        my_hero = my_hero_right
+        if (myHeroCadr > FPS_giraf):
+            my_hero = random.choice([my_hero_right1, my_hero_right2])
+            myHeroCadr = 0
         my_hero_rect.x += hero_go_speed
         # уперлись в левую границу экрана
         if my_hero_rect.x > SC_Width - my_hero_rect.width:
@@ -128,4 +139,5 @@ while True:
 
 
     pygame.display.update()
+    myHeroCadr += 1
     clock.tick(FPS)
