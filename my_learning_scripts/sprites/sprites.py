@@ -68,17 +68,22 @@ MyAnimals = pygame.sprite.Group()
 def createAnimal(group):
     indx = randint(0, len(MyAnimals_surf) - 1) # случайное животное из набора поверхностей
     x = randint(animal_width, SC_Width - animal_width)
-    speed = randint(1, 4) # скорость случайная
+    speed = randint(1, 5) # скорость случайная
     return Animals(x, speed, MyAnimals_surf[indx], group)
 
 # создаем первого животного
 createAnimal(MyAnimals)
+
+# устанавливаем пользовательский таймер
+pygame.time.set_timer(pygame.USEREVENT, 1000)
 
 while True:
     #обрабатываем выход из игры
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             exit()
+        if event.type == pygame.USEREVENT:
+            createAnimal(MyAnimals)
     ''''обрабатываем нажатие клавиш стрелок - движение персонажа
     если уперлись в границы экрана, то дальше не жвигаемся'''
     old_key = pygame.K_LEFT
