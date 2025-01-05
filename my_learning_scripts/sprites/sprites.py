@@ -5,7 +5,7 @@ pygame.init()
 #создаем окно с игрой - дисплей
 SC_Width = 800
 SC_Height = 600
-SC = pygame.display.set_mode((SC_Width, SC_Height), pygame.FULLSCREEN)  # Задаём размер игрового поля.
+SC = pygame.display.set_mode((SC_Width, SC_Height))  # Задаём размер игрового поля., pygame.FULLSCREEN
 
 #обновляем дисплей
 pygame.display.update()
@@ -52,10 +52,11 @@ sc_text = f.render('ЖИРАФ ЗИМОЙ НА ПРОГУЛКЕ!', 1, RED_COLOR,
 sc_text_rect = sc_text.get_rect(centerx=SC_Width//2, top=0)
 
 #----- определяме падающих животных сверху экрана--------------
-my_animal1 = Animals(SC_Width//2 + 100, 1, 'images/bear.png')
-my_animal2 = Animals(SC_Width//2-100, 3, 'images/coco.png')
-my_animal3 = Animals(SC_Width//2 + 300, 2, 'images/fox.png')
-my_animal4 = Animals(SC_Width//2 - 150, 1, 'images/cat.png')
+MyAnimals = pygame.sprite.Group()
+MyAnimals.add(Animals(SC_Width//2 + 100, 1, 'images/bear.png'),
+                    Animals(SC_Width//2-100, 3, 'images/coco.png'),
+                    Animals(SC_Width//2 + 300, 2, 'images/fox.png'),
+                    Animals(SC_Width//2 - 150, 1, 'images/cat.png'))
 
 while True:
     #обрабатываем выход из игры
@@ -99,15 +100,11 @@ while True:
     SC.blit(my_hero, my_hero_rect)
     SC.blit(sc_text, sc_text_rect)
 
+    # выводим сразу все спрайты
+    MyAnimals.draw(SC)
+    # обновляем сразу все спрайты
+    MyAnimals.update(SC_Height)
 
-    SC.blit(my_animal1.image, my_animal1.rect)
-    SC.blit(my_animal2.image, my_animal2.rect)
-    SC.blit(my_animal3.image, my_animal3.rect)
-    SC.blit(my_animal4.image, my_animal4.rect)
 
-    my_animal1.update(SC_Height)
-    my_animal2.update(SC_Height)
-    my_animal3.update(SC_Height)
-    my_animal4.update(SC_Height)
     pygame.display.update()
     clock.tick(FPS)
