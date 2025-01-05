@@ -1,11 +1,14 @@
 import pygame
-from class_animals import Animals
+from random import randint
+from class_animals import Animals, animal_width, animal_height
+
 #инициализируем pygame
 pygame.init()
 #создаем окно с игрой - дисплей
 SC_Width = 800
 SC_Height = 600
 SC = pygame.display.set_mode((SC_Width, SC_Height))  # Задаём размер игрового поля., pygame.FULLSCREEN
+
 
 #обновляем дисплей
 pygame.display.update()
@@ -35,6 +38,9 @@ my_hero_bottom = SC_Height - ground_height
 my_hero_width = 75
 my_hero_height = 100
 
+
+
+
 SC_background = pygame.image.load("images/background.jpg").convert()  # картинка - это тоже поверхность
 SC_background_rect = SC_background.get_rect(width=SC_Width, height=SC_Height)
 
@@ -52,11 +58,21 @@ sc_text = f.render('ЖИРАФ ЗИМОЙ НА ПРОГУЛКЕ!', 1, RED_COLOR,
 sc_text_rect = sc_text.get_rect(centerx=SC_Width//2, top=0)
 
 #----- определяме падающих животных сверху экрана--------------
+MyAnimals_images = ['bear.png', 'coco.png', 'fox.png', 'cat.png']
+MyAnimals_surf = [pygame.image.load('images/'+AnimalPath).convert_alpha() for AnimalPath in MyAnimals_images]
+
 MyAnimals = pygame.sprite.Group()
-MyAnimals.add(Animals(SC_Width//2 + 100, 1, 'images/bear.png'),
-                    Animals(SC_Width//2-100, 3, 'images/coco.png'),
-                    Animals(SC_Width//2 + 300, 2, 'images/fox.png'),
-                    Animals(SC_Width//2 - 150, 1, 'images/cat.png'))
+
+
+
+def createAnimal(group):
+    indx = randint(0, len(MyAnimals_surf) - 1) # случайное животное из набора
+    x = randint(animal_width, SC_Width - animal_width)
+    speed = randint(1, 4) # скорость случайная
+    return Animals(x, speed, MyAnimals_surf[indx], group)
+
+# создаем первого животного
+createAnimal(MyAnimals)
 
 while True:
     #обрабатываем выход из игры
@@ -103,7 +119,7 @@ while True:
     # выводим сразу все спрайты
     MyAnimals.draw(SC)
     # обновляем сразу все спрайты
-    MyAnimals.update(SC_Height)
+    MyAnimals.update(SC_Height, ground_height)
 
 
     pygame.display.update()
