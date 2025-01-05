@@ -1,8 +1,12 @@
 import random
-
 import pygame
 from random import randint
-from class_animals import Animals, animal_width, animal_height
+from class_animals import Animals
+# размеры падающих животных
+animal_width = 40
+animal_height = 40
+
+
 
 #инициализируем pygame
 pygame.init()
@@ -29,7 +33,7 @@ FPS_giraf = 3 # в какое число кадров менять жирафа 
 clock = pygame.time.Clock()
 
 
-jump_force = 30     # сила прыжка
+jump_force = 28     # сила прыжка
 move = jump_force+1
 hero_go_speed = 10 # скорость движения персонажа
 
@@ -42,6 +46,8 @@ my_hero_width = 75
 my_hero_height = 100
 # очки игры
 game_score = 0
+score_in = 0
+all_animals_count = 0
 
 
 SC_background = pygame.image.load("images/background.jpg").convert()  # картинка - это тоже поверхность
@@ -63,31 +69,52 @@ f = pygame.font.SysFont('Arial', 24)
 sc_text = f.render('ЖИРАФ ЗИМОЙ НА ПРОГУЛКЕ!', 1, RED_COLOR, GREEN_COLOR)
 sc_text_rect = sc_text.get_rect(centerx=SC_Width//2, top=0)
 
+# количество очков сверху
+def Score():
+    f = pygame.font.SysFont('Arial', 18)
+    sc_text = f.render(f'Очков: {game_score}' , 1, BLUE_COLOR, WHITE_COLOR)
+    sc_text_rect = sc_text.get_rect(left=5, top=5)
+    SC.blit(sc_text, sc_text_rect)
 
-#----- определяме падающих животных сверху экрана--------------
-MyAnimals_images = ['bear.png', 'coco.png', 'fox.png', 'cat.png']
-MyAnimals_scores = [4, 3, 2, 1]
-MyAnimals_surf = [pygame.image.load('images/'+AnimalPath).convert_alpha() for AnimalPath in MyAnimals_images]
+
+    sc_text = f.render(f'Поймал: {score_in}' , 1, WHITE_COLOR, GREEN_COLOR)
+    sc_text_rect = sc_text.get_rect(left=5, top=sc_text_rect.bottom)
+    SC.blit(sc_text, sc_text_rect)
+
+    sc_text = f.render(f'Убежало: {all_animals_count - score_in - len(MyAnimals)}' , 1, WHITE_COLOR, RED_COLOR)
+    sc_text_rect = sc_text.get_rect(left=5, top=sc_text_rect.bottom)
+    SC.blit(sc_text, sc_text_rect)
+
+#----- определяме падающих животных сверху экрана в виде словаря--------------
+MyAnimals_images = ({'image':'bear.png','score': 4},
+                    {'image':'coco.png','score': 3},
+                    {'image':'fox.png','score': 2},
+                    {'image':'cat.png','score': 1})
+MyAnimals_surf = [pygame.image.load('images/'+AnimalPath['image']).convert_alpha() for AnimalPath in MyAnimals_images]
 MyAnimals = pygame.sprite.Group()
 
 # функция создания случайного падающего животного
 def createAnimal(group):
+    global all_animals_count, animal_width, animal_height
     indx = randint(0, len(MyAnimals_surf) - 1) # случайное животное из набора поверхностей
     x = randint(animal_width, SC_Width - animal_width)
     speed = randint(1, 5) # скорость случайная
-    return Animals(x, speed, MyAnimals_scores[indx], MyAnimals_surf[indx], group)
+    all_animals_count += 1
+    return Animals(animal_width, animal_height, x, speed, MyAnimals_images[indx]['score'], MyAnimals_surf[indx], group)
 #контроль столкновения RECTов персонажа и падающих животных
 def AnimalsOnGiraf():
     global game_score
+    global score_in
     for animal in MyAnimals:
         if my_hero_rect.collidepoint(animal.rect.center):
             game_score += animal.score
+            score_in += 1
             animal.kill()
-
 
 
 # создаем первого животного
 createAnimal(MyAnimals)
+
 
 # устанавливаем пользовательский таймер, по нему будем создавать новых животных
 pygame.time.set_timer(pygame.USEREVENT, 1000)
@@ -134,7 +161,6 @@ while True:
             my_hero_rect.bottom = my_hero_bottom
             move = jump_force + 1 # чтобы перемещение по прыжку больше не срабатывало
 
-
     SC.blit(SC_background, SC_background_rect)
     SC.blit(my_hero, my_hero_rect)
     SC.blit(sc_text, sc_text_rect)
@@ -144,7 +170,7 @@ while True:
     # обновляем сразу все спрайты
     MyAnimals.update(SC_Height, ground_height)
 
-
+    Score()
     pygame.display.update()
     myHeroCadr += 1
     # ловим пойманных животных
