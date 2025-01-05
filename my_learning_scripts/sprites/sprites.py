@@ -29,7 +29,7 @@ FPS_giraf = 3 # в какое число кадров менять жирафа 
 clock = pygame.time.Clock()
 
 
-jump_force = 25     # сила прыжка
+jump_force = 30     # сила прыжка
 move = jump_force+1
 hero_go_speed = 10 # скорость движения персонажа
 
@@ -40,8 +40,8 @@ my_hero_bottom = SC_Height - ground_height
 #создаем персонажа  - пока это прямоугольник
 my_hero_width = 75
 my_hero_height = 100
-
-
+# очки игры
+game_score = 0
 
 
 SC_background = pygame.image.load("images/background.jpg").convert()  # картинка - это тоже поверхность
@@ -63,27 +63,36 @@ f = pygame.font.SysFont('Arial', 24)
 sc_text = f.render('ЖИРАФ ЗИМОЙ НА ПРОГУЛКЕ!', 1, RED_COLOR, GREEN_COLOR)
 sc_text_rect = sc_text.get_rect(centerx=SC_Width//2, top=0)
 
+
 #----- определяме падающих животных сверху экрана--------------
 MyAnimals_images = ['bear.png', 'coco.png', 'fox.png', 'cat.png']
+MyAnimals_scores = [4, 3, 2, 1]
 MyAnimals_surf = [pygame.image.load('images/'+AnimalPath).convert_alpha() for AnimalPath in MyAnimals_images]
-
 MyAnimals = pygame.sprite.Group()
-
 
 # функция создания случайного падающего животного
 def createAnimal(group):
     indx = randint(0, len(MyAnimals_surf) - 1) # случайное животное из набора поверхностей
     x = randint(animal_width, SC_Width - animal_width)
     speed = randint(1, 5) # скорость случайная
-    return Animals(x, speed, MyAnimals_surf[indx], group)
+    return Animals(x, speed, MyAnimals_scores[indx], MyAnimals_surf[indx], group)
+#контроль столкновения RECTов персонажа и падающих животных
+def AnimalsOnGiraf():
+    global game_score
+    for animal in MyAnimals:
+        if my_hero_rect.collidepoint(animal.rect.center):
+            game_score += animal.score
+            animal.kill()
+
+
 
 # создаем первого животного
 createAnimal(MyAnimals)
 
-# устанавливаем пользовательский таймер
+# устанавливаем пользовательский таймер, по нему будем создавать новых животных
 pygame.time.set_timer(pygame.USEREVENT, 1000)
+myHeroCadr = 0 # количество прошедших кадров на одну картинку героя
 
-myHeroCadr = 0
 while True:
     #обрабатываем выход из игры
     for event in pygame.event.get():
@@ -126,8 +135,6 @@ while True:
             move = jump_force + 1 # чтобы перемещение по прыжку больше не срабатывало
 
 
-
-
     SC.blit(SC_background, SC_background_rect)
     SC.blit(my_hero, my_hero_rect)
     SC.blit(sc_text, sc_text_rect)
@@ -140,4 +147,6 @@ while True:
 
     pygame.display.update()
     myHeroCadr += 1
+    # ловим пойманных животных
+    AnimalsOnGiraf()
     clock.tick(FPS)
