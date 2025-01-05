@@ -7,7 +7,6 @@ animal_height = 40
 # класс переписана функция инициализации, позволяет определить поверхность и rect
 class Animals(pygame.sprite.Sprite):
     # параметры падающих животных
-
     def __init__(self, x, speed, surf, group):
 
         pygame.sprite.Sprite.__init__(self)

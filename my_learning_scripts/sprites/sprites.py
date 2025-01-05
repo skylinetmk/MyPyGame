@@ -64,9 +64,9 @@ MyAnimals_surf = [pygame.image.load('images/'+AnimalPath).convert_alpha() for An
 MyAnimals = pygame.sprite.Group()
 
 
-
+# функция создания случайного падающего животного
 def createAnimal(group):
-    indx = randint(0, len(MyAnimals_surf) - 1) # случайное животное из набора
+    indx = randint(0, len(MyAnimals_surf) - 1) # случайное животное из набора поверхностей
     x = randint(animal_width, SC_Width - animal_width)
     speed = randint(1, 4) # скорость случайная
     return Animals(x, speed, MyAnimals_surf[indx], group)
