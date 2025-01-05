@@ -53,7 +53,10 @@ sc_text_rect = sc_text.get_rect(centerx=SC_Width//2, top=0)
 
 #----- определяме падающих животных сверху экрана--------------
 speedAnimal = 1 # --- скорость падения животных------
-my_animal1 = Animals(SC_Width//2, 'images/bear.png')
+my_animal1 = Animals(SC_Width//2 + 100, 1, 'images/bear.png')
+my_animal2 = Animals(SC_Width//2-100, 3, 'images/coco.png')
+my_animal3 = Animals(SC_Width//2 + 300, 2, 'images/fox.png')
+my_animal4 = Animals(SC_Width//2 - 150, 1, 'images/cat.png')
 
 while True:
     #обрабатываем выход из игры
@@ -99,11 +102,13 @@ while True:
 
 
     SC.blit(my_animal1.image, my_animal1.rect)
-    if my_animal1.rect.y < SC_Height-20:
-        my_animal1.rect.y += speedAnimal
-    else:
-        my_animal1.rect.y = 0
+    SC.blit(my_animal2.image, my_animal2.rect)
+    SC.blit(my_animal3.image, my_animal3.rect)
+    SC.blit(my_animal4.image, my_animal4.rect)
 
-
+    my_animal1.update(SC_Height)
+    my_animal2.update(SC_Height)
+    my_animal3.update(SC_Height)
+    my_animal4.update(SC_Height)
     pygame.display.update()
     clock.tick(FPS)
