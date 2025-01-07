@@ -189,8 +189,9 @@ while True:
 
     SC.blit(SC_background, SC_background_rect)
     Stage(1, 320, 810, 1500, 750)
-
+    #выводим героя на экран
     SC.blit(my_hero, my_hero_rect)
+    #выводим надпись о названиеи игры сверху
     SC.blit(sc_text, sc_text_rect)
 
     # выводим сразу все спрайты
