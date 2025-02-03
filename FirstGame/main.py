@@ -1,7 +1,12 @@
 import random
 import pygame
-from random import randint
+from random import randint, os
 from class_animals import Animals
+from pygame import mixer, display, image, time, transform, font
+# для компилирования под андройд (настройки в buildozer.spec)
+#path_android = "/data/data/com.SkyFirstApk/files/app/"
+path_android = os.path.abspath('.') + '/'
+path_android = "" # закоментируйте эту строку при компиляции под андройд
 # размеры падающих животных
 animal_width = 75
 animal_height = 75
@@ -16,14 +21,14 @@ SC_Height = 1080
 SC = pygame.display.set_mode((SC_Width, SC_Height))  # Задаём размер игрового поля., pygame.FULLSCREEN
 
 #инициализация музыки
-pygame.mixer.music.load("sounds/background.mp3")
+pygame.mixer.music.load(path_android + "sounds/background.mp3")
 #запуск с бесконечным повторением
 pygame.mixer.music.play(-1)
 #обновляем дисплей
 pygame.display.update()
 #caption для окна дисплея
-pygame.display.set_caption('Спрайты') #Добавляем название игры.
-pygame.display.set_icon(pygame.image.load("images/my_icon.png")) # иконка программы
+pygame.display.set_caption('Игра Жираф') #Добавляем название игры.
+pygame.display.set_icon(pygame.image.load(path_android + "images/my_icon.png")) # иконка программы
 
 WHITE_COLOR = (255, 255, 255)
 BLUE_COLOR = (0, 0, 255)
@@ -45,7 +50,7 @@ ground_height = 100
 my_hero_bottom = SC_Height - ground_height
 
 #создаем персонажа  - пока это прямоугольник
-my_hero_width = 121
+my_hero_width = 181
 my_hero_height = 261
 # очки игры
 game_score = 0
@@ -53,13 +58,13 @@ score_in = 0
 all_animals_count = 0
 
 
-SC_background = pygame.image.load("images/background.jpg").convert()  # фон игры
+SC_background = pygame.image.load(path_android + "images/background.jpg").convert()  # фон игры
 SC_background_rect = SC_background.get_rect(width=SC_Width, height=SC_Height)  # фон снизу, перекрывающий персонажа
-ground = pygame.image.load("images/ground.png").convert_alpha()  #
+ground = pygame.image.load(path_android + "images/ground.png").convert_alpha()  #
 ground_rect = SC_background.get_rect(width=SC_Width, height=SC_Height)
 
-my_hero_surf1 = pygame.image.load("images/my_hero_giraf.png").convert_alpha()  # картинка персонажа
-my_hero_surf2 = pygame.image.load("images/my_hero_giraf2.png").convert_alpha()  # еще картинка персонажа (для имитации движения)
+my_hero_surf1 = pygame.image.load(path_android + "images/my_hero_giraf.png").convert_alpha()  # картинка персонажа
+my_hero_surf2 = pygame.image.load(path_android + "images/my_hero_giraf2.png").convert_alpha()  # еще картинка персонажа (для имитации движения)
 my_hero_left1 = my_hero_surf1
 my_hero_right1 = pygame.transform.flip(my_hero_surf1,1,0)   # 1 и 0 трансформация по горизонтали и вертикали соотвественно
 my_hero_left2 = my_hero_surf2
@@ -70,30 +75,30 @@ my_hero = my_hero_left1 # первоначальная (по умолчанию)
 my_hero_rect = my_hero.get_rect(centerx=SC_Width // 2, width=my_hero_width, height=my_hero_height) # устанавливаем центр персонажа по X в центре экрана и другие параметры
 my_hero_rect.bottom = my_hero_bottom #устанавливаем нижнюю часть героя по верху земли
 
-f = pygame.font.Font('fonts/Bubblez_Graffiti.ttf', 48)
+f = pygame.font.Font(path_android + 'fonts/Bubblez_Graffiti.ttf', 48)
 sc_text = f.render('SKYLINETMK FIRST GAME!', 1, RED_COLOR, GREEN_COLOR)
 sc_text_rect = sc_text.get_rect(centerx=SC_Width//2, top=0)
 
 # количество очков сверху
 def Score():
-    image_score = pygame.image.load('images/score.png').convert_alpha()
-    f = pygame.font.Font('fonts/Bubblez_Graffiti.ttf', 38)
+    image_score = pygame.image.load(path_android + 'images/score.png').convert_alpha()
+    f = pygame.font.Font(path_android + 'fonts/Bubblez_Graffiti.ttf', 38)
     sc_text = f.render(f'    Очков: {game_score}' , 1, BLUE_COLOR, WHITE_COLOR)
     SC.blit(sc_text, sc_text.get_rect(left=0, top=5))
     SC.blit(image_score, image_score.get_rect(left=0, top=5))
 
-    image_in = pygame.image.load('images/animals_in.png').convert_alpha()
+    image_in = pygame.image.load(path_android + 'images/animals_in.png').convert_alpha()
     sc_text = f.render(f'    Поймал: {score_in}' , 1, WHITE_COLOR, GREEN_COLOR)
     SC.blit(sc_text, sc_text.get_rect(left=0, top=45))
     SC.blit(image_in, image_in.get_rect(left=0, top=45))
 
-    image_out = pygame.image.load('images/animals_out.png').convert_alpha()
+    image_out = pygame.image.load(path_android + 'images/animals_out.png').convert_alpha()
     sc_text = f.render(f'    Убежало: {all_animals_count - score_in - len(MyAnimals)}' , 1, WHITE_COLOR, RED_COLOR)
     SC.blit(sc_text, sc_text.get_rect(left=0, top=85))
     SC.blit(image_out, image_out.get_rect(left=0, top=85))
 
 def Stage(stageNumber, x, y, x2, y2):
-    f = pygame.font.Font('fonts/Bubblez_Graffiti.ttf', 35)
+    f = pygame.font.Font(path_android + 'fonts/Bubblez_Graffiti.ttf', 35)
     sc_text = pygame.transform.rotate((f.render(f'ИГРА  {stageNumber}', 1, WHITE_COLOR)), 15)
     SC.blit(sc_text, sc_text.get_rect(center=(x, y)))
     sc_text = f.render('NEXT', 1, WHITE_COLOR)
@@ -110,9 +115,9 @@ MyAnimals_images = ({'image':'bear.png','sound':'1.ogg','score': 4},
                     {'image':'hamster.png','sound':'8.ogg','score': 3},
                     {'image':'lion.png','sound':'9.ogg','score': 5},
                     {'image':'rabbit.png','sound':'10.ogg','score': 4})
-MyAnimals_surf = [pygame.image.load('images/'+AnimalPath['image']).convert_alpha() for AnimalPath in MyAnimals_images]
+MyAnimals_surf = [pygame.image.load(path_android + 'images/'+AnimalPath['image']).convert_alpha() for AnimalPath in MyAnimals_images]
 
-MyAnimals_sound = [pygame.mixer.Sound('sounds/'+AnimalSound['sound']) for AnimalSound in MyAnimals_images]
+MyAnimals_sound = [pygame.mixer.Sound(path_android + 'sounds/'+AnimalSound['sound']) for AnimalSound in MyAnimals_images]
 
 
 
@@ -170,7 +175,7 @@ while True:
             my_hero = random.choice([my_hero_right1, my_hero_right2])
             myHeroCadr = 0
         my_hero_rect.x += hero_go_speed
-        # уперлись в левую границу экрана
+        # уперлись в правую границу экрана
         if my_hero_rect.x > SC_Width - my_hero_rect.width:
             my_hero_rect.x = SC_Width - my_hero_rect.width
     # если нажат пробел и герой стоит на уровне земли- то прыжок
